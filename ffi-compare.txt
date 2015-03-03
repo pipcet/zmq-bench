@@ -1,0 +1,14 @@
+FFI::Raw Implementation
+ 
+$self->_zmq3_ffi->{zmq_send}->($self->_socket, $msg, $length, $flags)
+# spent 2.90s making 1000000 calls to ZMQ::FFI::ZMQ3::Socket::_zmq3_ffi, avg 3µs/call
+# spent 5.72s making 2000000 calls to FFI::Raw::coderef, avg 3µs/call
+# spent 19.9s making 1000000 calls to FFI::Raw::__ANON__[FFI/Raw.pm:94], avg 20µs/call
+ 
+ 
+FFI::Platypus Implementation
+ 
+sub ZMQ::FFI::ZMQ3::Socket::zmq3_send; # xsub
+
+zmq3_send($self->_socket, $msg, $length, $flags)
+# spent 1.76s making 1000000 calls to ZMQ::FFI::ZMQ3::Socket::zmq3_send, avg 2µs/call 
