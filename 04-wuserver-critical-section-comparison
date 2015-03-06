@@ -9,8 +9,8 @@ $self->_zmq3_ffi->{zmq_send}->($self->_socket, $msg, $length, $flags)
  
  
 # FFI::Platypus Implementation
- 
-sub ZMQ::FFI::ZMQ3::Socket::zmq3_send; # xsub
 
 zmq3_send($self->_socket, $msg, $length, $flags)
 # spent 1.76s making 1000000 calls to ZMQ::FFI::ZMQ3::Socket::zmq3_send, avg 2µs/call 
+ 
+sub ZMQ::FFI::ZMQ3::Socket::zmq3_send; # xsub
