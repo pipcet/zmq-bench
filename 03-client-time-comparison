@@ -1,5 +1,6 @@
 # FFI::Raw Implementation
 
+$ time perl wuserver.pl &
 $ time perl wuclient.pl
 Collecting updates from weather station...
 Average temperature for zipcode '10001 ' was 21F
@@ -11,6 +12,7 @@ sys     0m0.023s
 
 # FFI::Platypus Implementation
 
+$ time perl wuserver.pl &
 $ time perl wuclient.pl
 Collecting updates from weather station...
 Average temperature for zipcode '10001 ' was 32F
