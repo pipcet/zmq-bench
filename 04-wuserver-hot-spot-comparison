@@ -12,3 +12,11 @@ zmq3_send($self->_socket, $msg, $length, $flags)
 # spent 1.76s making 1000000 calls to ZMQ::FFI::ZMQ3::Socket::zmq3_send, avg 2µs/call 
  
 sub ZMQ::FFI::ZMQ3::Socket::zmq3_send; # xsub
+
+
+# XS Implementation (ZMQ::LibZMQ3)
+
+zmq_send($socket, $string, -1);
+# spent 1.15s making 1000000 calls to ZMQ::LibZMQ3::zmq_send, avg 1µs/call
+
+sub ZMQ::LibZMQ3::zmq_send; # xsub
