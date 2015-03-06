@@ -5,8 +5,6 @@ $self->_zmq3_ffi->{zmq_send}->($self->_socket, $msg, $length, $flags)
 # spent 5.72s making 2000000 calls to FFI::Raw::coderef, avg 3µs/call
 # spent 2.90s making 1000000 calls to ZMQ::FFI::ZMQ3::Socket::_zmq3_ffi, avg 3µs/call
 
-
- 
  
 # FFI::Platypus Implementation
 
