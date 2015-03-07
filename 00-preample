@@ -7,7 +7,7 @@ wuclient.pl using the various implementations, and then by profiling
 wuserver.pl using Devel::NYTProf.  When profiling the server is changed to
 simply publish 1 million messages and exit. 
 
-Example code was lightly optimized (e.g. don't do assignments in loop) and
+Example code was lightly optimized (e.g. don't declare vars in loop) and
 modified to be more consistent.
 
 
