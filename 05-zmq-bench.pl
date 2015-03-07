@@ -75,3 +75,19 @@ my $r = timethese 10_000_000, {
 };
 
 cmpthese($r);
+
+__END__
+
+OUTPUT
+------
+perl ~/tmp/zmq-bench.pl
+FFI ZMQ Version: 4.0.5
+XS  ZMQ Version: 4.0.5
+
+Benchmark: timing 10000000 iterations of FFI, XS...
+       FFI:  4 wallclock secs ( 3.31 usr +  0.01 sys =  3.32 CPU) @ 3012048.19/s (n=10000000)
+        XS:  2 wallclock secs ( 2.16 usr +  0.00 sys =  2.16 CPU) @ 4629629.63/s (n=10000000)
+
+         Rate  FFI   XS
+FFI 3012048/s   -- -35%
+XS  4629630/s  54%   --
