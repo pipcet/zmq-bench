@@ -15,11 +15,11 @@ sys     0m0.023s
 $ perl wuserver.pl &
 $ time perl wuclient.pl
 Collecting updates from weather station...
-Average temperature for zipcode '10001 ' was 32F
+Average temperature for zipcode '10001 ' was 25F
 
-real    0m22.645s
-user    0m0.053s
-sys     0m0.023s
+real    0m14.546s
+user    0m0.067s
+sys     0m0.010s
 
 
 # XS Implementation (ZMQ::LibZMQ3)

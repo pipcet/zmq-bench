@@ -1,12 +1,13 @@
 use strict;
 use warnings;
 
-use ZMQ::FFI;
-use ZMQ::FFI::Constants qw(ZMQ_PUB);
+use ZMQ::LibZMQ3;
+use ZMQ::Constants qw(ZMQ_PUB);
+use zhelpers;
 
-my $context   = ZMQ::FFI->new();
-my $publisher = $context->socket(ZMQ_PUB);
-$publisher->bind("tcp://*:5556");
+my $context   = zmq_init();
+my $publisher = zmq_socket($context, ZMQ_PUB);
+zmq_bind($publisher, 'tcp://*:5556');
 
 my ($zipcode, $temperature, $relhumidity, $update);
 
@@ -21,5 +22,5 @@ while (1) {
         $zipcode,$temperature,$relhumidity
     );
 
-    $publisher->send($update);
+    s_send($publisher, $update);
 }
