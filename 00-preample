@@ -14,7 +14,7 @@ Test box:
   CPU:  Intel Core Quad i7-2600K CPU @ 3.40GHz
   Mem:  4GB
   OS:   Arch Linux
-  ZMQ:  3.2.6
+  ZMQ:  4.0.5
   Perl: 5.20.1
 
   ZMQ::FFI      = 0.19 (FFI::Raw backend), dev (FFI::Platypus backend)
