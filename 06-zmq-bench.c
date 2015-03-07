@@ -32,8 +32,6 @@ int main(void)
 
 /*
 
-OUTPUT
-------
 $ time zmq-bench-c
 C ZMQ Version: 4.0.5
 

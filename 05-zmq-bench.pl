@@ -78,8 +78,6 @@ cmpthese($r);
 
 __END__
 
-OUTPUT
-------
 $ perl zmq-bench.pl
 FFI ZMQ Version: 4.0.5
 XS  ZMQ Version: 4.0.5
