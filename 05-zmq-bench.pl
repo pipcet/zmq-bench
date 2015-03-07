@@ -51,14 +51,6 @@ die 'xs socket error' unless $xs_socket;
 $rv = zmq_bind($xs_socket, "ipc:///tmp/xs-bench-$$");
 die 'xs bind error' if $rv == -1;
 
-
-my ($major, $minor, $patch);
-zmqffi_version(\$major, \$minor, \$patch);
-
-say "FFI ZMQ Version: " . join(".", $major, $minor, $patch);
-say "XS  ZMQ Version: " . join(".", ZMQ::LibZMQ3::zmq_version());
-
-
 my $r = timethese 10_000_000, {
     'XS'  => sub {
         die 'xs send error ' if -1 == zmq_send($xs_socket, 'ohhai', -1)
@@ -85,4 +77,4 @@ XS  4385965/s   25%    --
 C* 16863406/s  480%  384%
 
 *I wrote the same code as above in C and timed it.  'Faking' it into the
-results table so its easy to compare against a pure C baseline
+results table so it's easy to compare against a pure C baseline
