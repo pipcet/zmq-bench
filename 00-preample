@@ -10,4 +10,15 @@ simply publish 1 million messages and exit.
 Example code was lightly optimized (e.g. don't declare vars in loop) and
 modified to be more consistent.
 
+Test box:
+  CPU:  Intel Core Quad i7-2600K CPU @ 3.40GHz
+  Mem:  4GB
+  OS:   Arch Linux
+  ZMQ:  3.2.6
+  Perl: 5.20.1
+
+  ZMQ::FFI      = 0.19 (FFI::Raw backend), dev (FFI::Platypus backend)
+  FFI::Raw      = 0.32
+  FFI::Platypus = 0.31
+  ZMQ::LibZMQ3  = 1.19
 
