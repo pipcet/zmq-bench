@@ -32,7 +32,8 @@ attach(
 );
 
 attach(
-    ['zmq_version' => 'zmqffi_version'] => ['int*', 'int*', 'int*'] => 'void'
+    ['zmq_version' => 'zmqffi_version'] 
+        => ['int*', 'int*', 'int*'] => 'void'
 );
 
 my $ffi_ctx = zmqffi_ctx_new();
