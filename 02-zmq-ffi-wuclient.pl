@@ -8,6 +8,7 @@ use ZMQ::FFI::Constants qw(ZMQ_SUB);
 say "Collecting updates from weather station...";
 
 my $context = ZMQ::FFI->new();
+
 my $subscriber = $context->socket(ZMQ_SUB);
 $subscriber->connect("tcp://localhost:5556");
 
