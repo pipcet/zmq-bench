@@ -76,5 +76,5 @@ FFI 3508772/s    --  -20%
 XS  4385965/s   25%    --
 C* 16863406/s  480%  384%
 
-*I wrote the same code as above in C and timed it.  'Faking' it into the
+*I wrote the same code as above in C (see below) and timed it.  'Faking' it into the
 results table so it's easy to compare against a pure C baseline
