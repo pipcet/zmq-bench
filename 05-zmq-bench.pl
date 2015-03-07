@@ -75,11 +75,11 @@ __END__
 
 RESULT
 ------
-FFI ZMQ Version: 4.0.5
-XS  ZMQ Version: 4.0.5
 Benchmark: timing 10000000 iterations of FFI, XS...
        FFI:  4 wallclock secs ( 2.85 usr +  0.00 sys =  2.85 CPU) @ 3508771.93/s (n=10000000)
         XS:  3 wallclock secs ( 2.28 usr +  0.00 sys =  2.28 CPU) @ 4385964.91/s (n=10000000)
-         Rate  FFI   XS
-FFI 3508772/s   -- -20%
-XS  4385965/s  25%   --
+
+         Rate   FFI    XS
+FFI 3508772/s    --  -20%
+XS  4385965/s   25%    --
+C  16863406/s  480%  384%
