@@ -80,7 +80,7 @@ __END__
 
 OUTPUT
 ------
-$ perl ~/tmp/zmq-bench.pl
+$ perl zmq-bench.pl
 FFI ZMQ Version: 4.0.5
 XS  ZMQ Version: 4.0.5
 

@@ -34,7 +34,7 @@ int main(void)
 
 OUTPUT
 ------
-$ time /tmp/zmq-bench-c
+$ time zmq-bench-c
 C ZMQ Version: 4.0.5
 
 real    0m0.594s
