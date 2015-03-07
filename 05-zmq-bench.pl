@@ -73,9 +73,8 @@ cmpthese($r);
 
 __END__
 
-OUTPUT:
-
-perl zmq-bench.pl
+RESULT
+------
 FFI ZMQ Version: 4.0.5
 XS  ZMQ Version: 4.0.5
 Benchmark: timing 10000000 iterations of FFI, XS...
