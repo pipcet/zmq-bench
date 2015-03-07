@@ -5,7 +5,7 @@ use ZMQ::LibZMQ3;
 use ZMQ::Constants qw(ZMQ_PUB);
 use zhelpers;
 
-my $context   = zmq_init();
+my $context = zmq_init();
 
 my $publisher = zmq_socket($context, ZMQ_PUB);
 zmq_bind($publisher, 'tcp://*:5556');

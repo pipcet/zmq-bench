@@ -4,7 +4,7 @@ use warnings;
 use ZMQ::FFI;
 use ZMQ::FFI::Constants qw(ZMQ_PUB);
 
-my $context   = ZMQ::FFI->new();
+my $context = ZMQ::FFI->new();
 
 my $publisher = $context->socket(ZMQ_PUB);
 $publisher->bind("tcp://*:5556");
