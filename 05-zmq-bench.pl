@@ -78,6 +78,8 @@ cmpthese($r);
 
 __END__
 
+### Benchmark.pm results ###
+
 $ perl zmq-bench.pl
 FFI ZMQ Version: 4.0.5
 XS  ZMQ Version: 4.0.5
@@ -95,6 +97,8 @@ C* 16835017/s  559%  364%    --
 results into the table so it's easy to compare a baseline
 
 
+# For profiling and timing in the shell below send in a for loop instead of via Benchmark
+
 ### Devel::NYTProf profiling data ###
 
 # spent 15.5s within main::zmqffi_send which was called 10000000 times, avg 2µs/call: # 10000000 times (15.5s+0s) by main::RUNTIME at line 68, avg 2µs/call
@@ -110,8 +114,6 @@ A: ???
 
 
 ### shell time zmq-bench.pl ###
-
-# Send in for loop instead of via Benchmark and time each separately
 
 $ time perl bench/zmq-bench.pl
 FFI ZMQ Version: 4.0.5
