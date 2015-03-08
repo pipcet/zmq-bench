@@ -15,7 +15,7 @@ loop) and modified to be more consistent.
 Additionally, a more direct benchmark and comparison of `FFI::Platypus` vs XS
 xsubs is also done.
 
-C and Python implementation results are also provided as a baseline for
+C and Python implementation results are provided as a baseline for
 performance.
 
 All the code that was created or modified for these benchmarks is listed at
