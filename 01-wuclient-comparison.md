@@ -60,7 +60,7 @@ I was initially impressed with the performance of the Python example:
     user    0m0.063s
     sys     0m0.020s
 
-Wow, that's almost as fast as C! But then I noticed:
+Wow, that's almost as fast as C!  But then I noticed:
 
 ```python
 # Process 5 updates
