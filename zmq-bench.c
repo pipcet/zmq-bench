@@ -25,7 +25,4 @@ int main(void)
 
     printf("C ZMQ Version: %d.%d.%d\n", major, minor, patch);
 
-    for ( int i = 0; i < (10 * 1000 * 1000); i++ ) {
-        assert( -1 != zmq_send(socket, "ohhai", 5, 0) );
-    }
-}
+    for 
