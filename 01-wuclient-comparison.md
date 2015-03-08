@@ -46,3 +46,41 @@
     real    0m2.842s
     user    0m0.000s
     sys     0m0.023s
+
+#### Python Reference Implementation ####
+
+I was initially impressed with the performance of the Python example:
+
+    $ python wuserver.py &
+    $ time python wuclient.py
+    Collecting updates from weather server...
+    Average temperature for zipcode '10001' was 49F
+
+    real    0m4.599s
+    user    0m0.063s
+    sys     0m0.020s
+
+Wow, that's almost as fast as C! But then I noticed:
+
+```python
+# Process 5 updates
+total_temp = 0
+for update_nbr in range(5)
+    ...
+```
+
+So where the C and Perl implementations are processing 100 updates, the Python
+version only processes 5, or **1/20** as many. What about if we use 100
+updates like the other languages?
+
+    $ python wuserver.py &
+    $ time python wuclient.py
+    Collecting updates from weather server...
+    Average temperature for zipcode '10001' was 17F
+
+    real    1m41.108s
+    user    0m0.077s
+    sys     0m0.017s
+
+If nothing else, at least the Perl bindings blow the doors off the Python
+ones :)
