@@ -50,7 +50,7 @@ Benchmark
 
 
 _Q: Why does the profiler indicate basically identical performance of the xsubs,
-but Benchmark reports substantial performance difference?_
+but Benchmark reports performance difference?_
 
 _A: ???_
 
