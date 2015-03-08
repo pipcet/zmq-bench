@@ -13,12 +13,13 @@ Weather station example code was lightly optimized (e.g. don't declare vars in
 loop) and modified to be more consistent.
 
 Additionally, a more direct benchmark and comparison of `FFI::Platypus` vs XS
-xsubs is also done. 
+xsubs is also done.
 
-C implementation results are also provided as a baseline for performance.
+C and Python implementation results are also provided as a baseline for
+performance.
 
 All the code that was created or modified for these benchmarks is listed at
-the end (C wuclient/wuserver code can be found in the [zmq guide](http://zguide.zeromq.org/page:all#toc13)).
+the end (C/Python wuclient/wuserver code can be found in the [zmq guide](http://zguide.zeromq.org/page:all#toc13)).
 
 #### Test box ####
     CPU:  Intel Core Quad i7-2600K CPU @ 3.40GHz
