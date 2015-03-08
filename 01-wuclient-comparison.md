@@ -49,11 +49,13 @@
 
 #### Python Reference Implementation ####
 
-    Python: 3.4.2
-    PyZMQ:  14.5.0
-
 I was initially impressed with the performance of the Python example:
 
+    $ python -V
+    Python 3.4.2
+    $ python -c 'import zmq; print(zmq.pyzmq_version())'
+    14.5.0
+    
     $ python wuserver.py &
     $ time python wuclient.py
     Collecting updates from weather server...
