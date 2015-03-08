@@ -35,3 +35,14 @@
     user    0m0.017s
     sys     0m0.010s
 
+
+#### C Reference Implementation ####
+
+    $ ./wuserver &
+    $ time ./wuclient
+    Collecting updates from weather server...
+    Average temperature for zipcode '10001 ' was 26F
+
+    real    0m2.842s
+    user    0m0.000s
+    sys     0m0.023s
