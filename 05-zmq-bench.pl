@@ -94,3 +94,36 @@ C* 16835017/s  559%  364%    --
 *I wrote equivalent code in C and timed it (see below), just 'faking' the
 results into the table so it's easy to compare a baseline
 
+
+### Devel::NYTProf profiling data ###
+
+# spent 15.5s within main::zmqffi_send which was called 10000000 times, avg 2µs/call: # 10000000 times (15.5s+0s) by main::RUNTIME at line 68, avg 2µs/call
+sub main::zmqffi_send; # xsub
+
+# spent 15.6s within ZMQ::LibZMQ3::zmq_send which was called 10000000 times, avg 2µs/call: # 10000000 times (15.6s+0s) by main::RUNTIME at line 67 of zmq-bench.pl, avg 2µs/call
+sub ZMQ::LibZMQ3::zmq_send; # xsub
+
+Q: Why does the profiler indicate basically identical performance of the xsubs,
+but Benchmark reports substantial performance difference?
+
+A: ???
+
+
+### shell time zmq-bench.pl ###
+
+# Send in for loop instead of via Benchmark and time each separately
+
+$ time perl bench/zmq-bench.pl
+FFI ZMQ Version: 4.0.5
+
+real    0m3.541s
+user    0m3.510s
+sys     0m0.027s
+
+$ time perl bench/zmq-bench.pl
+XS ZMQ Version: 4.0.5
+
+real    0m3.539s
+user    0m3.507s
+sys     0m0.020s
+
