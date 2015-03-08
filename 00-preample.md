@@ -1,4 +1,4 @@
-### Perl zeromq FFI vs XS
+### ZeroMQ Perl Performance Comparison: FFI vs XS bindings ###
 
 Comparison of the performance of FFI vs XS zeromq bindings.  For FFI the
 `ZMQ::FFI` bindings are used, first using `FFI::Raw` on the backend and then
