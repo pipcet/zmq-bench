@@ -49,6 +49,9 @@
 
 #### Python Reference Implementation ####
 
+Python: 3.4.2
+PyZMQ:  14.5.0
+
 I was initially impressed with the performance of the Python example:
 
     $ python wuserver.py &
