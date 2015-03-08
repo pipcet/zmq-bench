@@ -18,7 +18,7 @@ xsubs is also done.
 C implementation results are also provided as a baseline for performance.
 
 All the code that was created or modified for these benchmarks is listed at
-the end (C wuclient/wuserver code can be found in the [zmq guide](http://zguide.zeromq.org/page:all#toc13).
+the end (C wuclient/wuserver code can be found in the [zmq guide](http://zguide.zeromq.org/page:all#toc13)).
 
 #### Test box ####
     CPU:  Intel Core Quad i7-2600K CPU @ 3.40GHz
