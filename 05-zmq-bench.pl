@@ -1,3 +1,7 @@
+#
+# Directly compare FFI::Platypus vs XS xsubs
+#
+
 use strict;
 use warnings;
 use v5.10;
