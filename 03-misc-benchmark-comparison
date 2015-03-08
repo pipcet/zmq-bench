@@ -52,6 +52,9 @@ real    0m3.541s
 user    0m3.510s
 sys     0m0.027s
 
+$ echo '10000000 / 3.541' | bc -lq
+2824060.999 # Rate
+
 $ time perl bench/zmq-bench.pl
 XS ZMQ Version: 4.0.5
 
@@ -59,3 +62,5 @@ real    0m3.539s
 user    0m3.507s
 sys     0m0.020s
 
+$ echo '10000000 / 3.539' | bc -lq
+2825656.965 # Rate
