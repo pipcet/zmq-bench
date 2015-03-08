@@ -80,5 +80,4 @@ my $r = timethese 10_000_000, {
 
 cmpthese($r);
 
-__END__
 
