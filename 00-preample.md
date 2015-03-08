@@ -6,7 +6,7 @@ using `FFI::Platypus`.  For XS `ZMQ::LibZMQ3` is used.
 
 Comparison is done using the zeromq weather station example, first by timing
 wuclient.pl using the various implementations, and then by profiling
-wuserver.pl using Devel::NYTProf.  When profiling the server is changed to
+wuserver.pl using `Devel::NYTProf`.  When profiling the server is changed to
 simply publish 1 million messages and exit.
 
 Weather station example code was lightly optimized (e.g. don't declare vars in
