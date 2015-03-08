@@ -13,8 +13,9 @@ Weather station example code was lightly optimized (e.g. don't declare vars in
 loop) and modified to be more consistent.
 
 Additionally, a more direct benchmark and comparison of `FFI::Platypus` vs XS
-xsubs is also done, using a pure C implementation as a baseline for
-performance.
+xsubs is also done. 
+
+C implementation results are also provided as a baseline for performance.
 
 All the code used to generate the results is listed at the end.
 
