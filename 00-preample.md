@@ -1,8 +1,8 @@
-#### Methodology ####
+### Perl zeromq FFI vs XS
 
-Comparison of the performance of XS vs FFI zeromq bindings.  For FFI the
-`ZMQ::FFI` bindings are used, first using FFI::Raw on the backend and then using
-`FFI::Platypus`.  For XS `ZMQ::LibZMQ3` is used.
+Comparison of the performance of FFI vs XS zeromq bindings.  For FFI the
+`ZMQ::FFI` bindings are used, first using `FFI::Raw` on the backend and then
+using `FFI::Platypus`.  For XS `ZMQ::LibZMQ3` is used.
 
 Comparison is done using the zeromq weather station example, first by timing
 wuclient.pl using the various implementations, and then by profiling
