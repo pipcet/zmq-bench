@@ -82,9 +82,9 @@ cmpthese($r);
 
 __END__
 
-# results
+*results
 
-### Benchmark.pm ###
+### Benchmark.pm results ###
 
 $ perl zmq-bench.pl
 FFI ZMQ Version: 4.0.5
