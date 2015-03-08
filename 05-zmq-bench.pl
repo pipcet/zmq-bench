@@ -82,8 +82,6 @@ cmpthese($r);
 
 __END__
 
-*results
-
 ### Benchmark.pm results ###
 
 $ perl zmq-bench.pl
@@ -100,7 +98,7 @@ XS  4629630/s   54%    --  -73%
 C* 16835017/s  559%  364%    --
 
 *I wrote equivalent code in C and timed it (see below), just 'faking' the
-results into the table so it's easy to compare a baseline
+results into the table so there's a baseline to compare to
 
 
 # For profiling and timing in the shell below send in a for loop instead of via Benchmark
