@@ -76,3 +76,5 @@ _A: ???_
 
     $ echo '10000000 / 2.390' | bc -lq
     4184100.418 # Rate
+
+XS is 48% faster when timing on the shell.
