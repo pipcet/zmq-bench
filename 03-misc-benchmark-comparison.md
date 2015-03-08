@@ -36,7 +36,7 @@ _*just 'faking' the C results below into the table so it's easy to compare a bas
     16835016.835 # Rate
 
 
-#### Devel::NYTProf Profiling Results ####
+#### Devel::NYTProf profiling results ####
 
 For profiling and timing in the shell below send in a for loop instead of via
 Benchmark
