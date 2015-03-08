@@ -29,17 +29,3 @@ int main(void)
         assert( -1 != zmq_send(socket, "ohhai", 5, 0) );
     }
 }
-
-/*
-
-$ time zmq-bench-c
-C ZMQ Version: 4.0.5
-
-real    0m0.594s
-user    0m0.570s
-sys     0m0.017s
-
-$ echo '10000000 / 0.594' | bc -lq
-16835016.835 # Rate
-
-*/
