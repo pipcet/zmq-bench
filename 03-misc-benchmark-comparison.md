@@ -37,6 +37,7 @@ sub main::zmqffi_send; # xsub
 # spent 15.6s within ZMQ::LibZMQ3::zmq_send which was called 10000000 times, avg 2µs/call: # 10000000 times (15.6s+0s) by main::RUNTIME at line 67 of zmq-bench.pl, avg 2µs/call
 sub ZMQ::LibZMQ3::zmq_send; # xsub
 
+
 Q: Why does the profiler indicate basically identical performance of the xsubs,
 but Benchmark reports substantial performance difference?
 
