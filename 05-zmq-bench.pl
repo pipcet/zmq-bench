@@ -53,7 +53,7 @@ die 'xs ctx error' unless $xs_ctx;
 my $xs_socket = zmq_socket($xs_ctx, ZMQ_PUB);
 die 'xs socket error' unless $xs_socket;
 
-$rv = zmq_bind($xs_socket, "ipc:///tmp/xs-bench-$$");
+$rv = zmq_bind($xs_socket, "ipc:///tmp/zmq-xs-bench-$$");
 die 'xs bind error' if $rv == -1;
 
 

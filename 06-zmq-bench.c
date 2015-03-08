@@ -16,7 +16,7 @@ int main(void)
     pid_t p = getpid();
 
     char *endpoint = malloc(256);
-    sprintf(endpoint, "ipc:///tmp/c-zmq-bench-%d", p);
+    sprintf(endpoint, "ipc:///tmp/zmq-c-bench-%d", p);
 
     assert( -1 != zmq_bind(socket, endpoint) );
 
