@@ -30,10 +30,18 @@ attach(
         => ['pointer', 'string'] => 'int'
 );
 
-attach(
-    ['zmq_send' => 'zmqffi_send']
+my $ffi = FFI::Platypus->new;
+
+$ffi->lib('libzmq.so');
+$ffi->attach_method([$ffi],
+    ['zmq_send' => 'ffi']
         => ['pointer', 'string', 'size_t', 'int'] => 'int'
 );
+
+attach(
+  ['zmq_send' => 'ffi2']
+  => ['pointer', 'string', 'size_t', 'int'] => 'int',
+    );
 
 attach(
     ['zmq_version' => 'zmqffi_version'] 
@@ -66,18 +74,78 @@ zmqffi_version(\$major, \$minor, \$patch);
 
 say "FFI ZMQ Version: " . join(".", $major, $minor, $patch);
 say "XS  ZMQ Version: " . join(".", ZMQ::LibZMQ3::zmq_version());
+use bytes;
 
+
+
+use Inline C => qq{
+typedef int (*send_t)(void *, const char *, long, int);
+
+void loop_Inline(void *send, void *socket, const char *data, long size, int flags, void *die)
+{
+  send_t s = send;
+  void (*d)(void) = die;
+  int i;
+  for(i=0; i<10*1000*1000; i++) {
+    if(s(socket, data, size, flags) == 1)
+      d();
+  }
+}
+};
+
+my $tcc = FFI::TinyCC->new;
+
+$tcc->compile_string(q{
+  void
+  loop(int (*f)(void *, const char *, long, int), void *arg0, const char *arg1, long arg2, int arg3, void (*die)(void))
+  {
+    int i;
+    for(i=0; i<10*1000*1000; i++)
+      if(f(arg0, arg1, arg2, arg3) == -1)
+        die();
+  }
+});
+
+my $address = $tcc->get_symbol('loop');
+
+lib 'libzmq.so';
+my $zmqsend = sub { FFI::Platypus::Declare::_ffi_object }->()->find_symbol('zmq_send');
+
+type('(opaque, string, long, int)->int', 'f_closure');
+type('()->void', 'die_closure');
+attach([$address => 'loop'] => [qw(f_closure opaque string long int die_closure)] => 'void');
+
+my $r3 = timethese 1, {
+  TinyCC => sub {
+    my $die_closure = closure  { die "zmq_send error"};
+
+    loop($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
+  },
+  Inline => sub {
+    my $die_closure = closure { die "zmq_send error" };
+
+    loop_Inline($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
+  },
+};
 
 my $r = timethese 10_000_000, {
+    'FFI' => sub {
+        die 'ffi send error' if -1 == main::ffi($ffi, $ffi_socket, 'ohhai', 5, 0);
+    },
+
+    'FFI2' => sub {die 'ffi send error' if -1 == ffi2($ffi_socket, 'ohhai', 5, 0);},
+
     'XS'  => sub {
         die 'xs send error ' if -1 == zmq_send($xs_socket, 'ohhai', 5, 0);
     },
-
-    'FFI' => sub {
-        die 'ffi send error' if -1 == zmqffi_send($ffi_socket, 'ohhai', 5, 0);
-    },
 };
 
-cmpthese($r);
+for my $key (keys %$r3)
+{
+  $r->{$key} = $r3->{$key};
+  # HACK! we're accessing the Benchmark's object internal struct
+  $r->{$key}->[5] = 10_000_000;
+}
 
+cmpthese($r);
 
