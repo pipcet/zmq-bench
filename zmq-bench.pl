@@ -49,6 +49,9 @@ $ffi->attach_method([$ffi],
         => ['pointer', 'string', 'size_t', 'int'] => 'int'
 );
 
+$ffi->attach_method(['FFIsock'], ['zmq_send' => 'ffi2']
+		    => ['pointer', 'string', 'size_t', 'int'] => 'int');
+
 my $ffi_ctx = main::zmqffi_ctx_new();
 die 'ffi ctx error' unless $ffi_ctx;
 
@@ -149,23 +152,23 @@ my $r3 = timethese 1, {
 };
 
 my $r = timethese 10_000_000, {
-    # 'FFI main:: method' => sub {
-    #     die 'ffi send error' if -1 == main::ffi($ffi, $ffi_socket, 'ohhai', 5, 0);
-    # },
+    'class method' => sub {
+        die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
+    },
 
-    # 'FFI main:: method in hash' => sub {
-    #     die 'ffi send error' if -1 == main::ffi($ffi, $ffi_hash->{socket}, 'ohhai', 5, 0);
-    # },
+    'class method, hash' => sub {
+        die 'ffi send error' if -1 == FFIsock->ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
+    },
 
-    'FFI object method' => sub {
+    'method' => sub {
         die 'ffi send error' if -1 == $sockobj->ffio('ohhai', 5, 0);
     },
 
-    'FFI xsub' => sub {
+    'xsub' => sub {
         die 'ffi send error' if -1 == ffi2($ffi_socket, 'ohhai', 5, 0);
     },
 
-    'FFI xsub in hash' => sub {
+    'xsub, hash' => sub {
         die 'ffi send error' if -1 == ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
     },
 
