@@ -184,7 +184,7 @@ my $r = timethese 10_000_000, {
 for my $key (keys %$r3)
 {
   $r->{$key} = $r3->{$key};
-  # HACK! we're accessing the Benchmark's object internal struct
+  # HACK! we're accessing the Benchmark object's internal struct
   $r->{$key}->[5] = 10_000_000;
 }
 
