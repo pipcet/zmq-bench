@@ -98,8 +98,6 @@ say "FFI ZMQ Version: " . join(".", $major, $minor, $patch);
 say "XS  ZMQ Version: " . join(".", ZMQ::LibZMQ3::zmq_version());
 use bytes;
 
-
-
 use Inline C => qq{
 typedef int (*send_t)(void *, const char *, long, int);
 
@@ -149,6 +147,12 @@ my $r3 = timethese 1, {
 
     loop_Inline($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
   },
+  Python => sub {
+    # this is a little unfair, since there's overhead for starting
+    # python and waiting for it, but that's on the order of a tenth of
+    # a second ...
+    system("python ./zmq-bench.py");
+  }
 };
 
 my $r = timethese 10_000_000, {
