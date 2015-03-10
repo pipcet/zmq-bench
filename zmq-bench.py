@@ -14,6 +14,9 @@ socket = context.socket(zmq.PUB)
 socket.bind('ipc:///tmp/zmq-py-bench')
 
 buf = bytes('ohhai')
-# Process 1000 updates
-for i in range(100*1000*1000):
+i=0
+while True:
+    i+=1
     socket.send(buf, 0)
+    if i == 100*1000*1000:
+        exit(0)

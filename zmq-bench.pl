@@ -152,15 +152,18 @@ my $r3 = timethese 1, {
     # python and waiting for it, but that's on the order of a tenth of
     # a second ...
     system("python ./zmq-bench.py");
+  },
+  'Perl exec' => sub {
+    system("perl ./zmq-bench-selfcontained.pl");
   }
 };
 
-my $r = timethese 100_000_000, {
+my $r = timethese 10_000_000, {
     'class method' => sub {
         die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
     },
 
-    'class method, hash' => sub {
+    'class method(hash)' => sub {
         die 'ffi send error' if -1 == FFIsock->ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
     },
 
@@ -172,7 +175,7 @@ my $r = timethese 100_000_000, {
         die 'ffi send error' if -1 == ffi2($ffi_socket, 'ohhai', 5, 0);
     },
 
-    'xsub, hash' => sub {
+    'xsub(hash)' => sub {
         die 'ffi send error' if -1 == ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
     },
 
