@@ -7,13 +7,13 @@
 import sys
 import zmq
 
-
 #  Socket to talk to server
 context = zmq.Context()
 socket = context.socket(zmq.PUB)
 
 socket.bind('ipc:///tmp/zmq-py-bench')
 
+buf = bytes('ohhai')
 # Process 1000 updates
 for i in range(10*1000*1000):
-    socket.send('ohhai', 0, True)
+    socket.send(buf, 0)
