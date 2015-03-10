@@ -30,13 +30,34 @@ attach(
         => ['pointer', 'string'] => 'int'
 );
 
+package FFIsock;
+
+use ZMQ::LibZMQ3;
+
+sub new {
+  return bless [], $_[0];
+}
+
 my $ffi = FFI::Platypus->new;
 
+my $sockobj = FFIsock->new;
+
 $ffi->lib('libzmq.so');
+
 $ffi->attach_method([$ffi],
     ['zmq_send' => 'ffi']
         => ['pointer', 'string', 'size_t', 'int'] => 'int'
 );
+
+my $ffi_ctx = main::zmqffi_ctx_new();
+die 'ffi ctx error' unless $ffi_ctx;
+
+use ZMQ::FFI::Constants qw(:all);
+my $ffi_socket = main::zmqffi_socket($ffi_ctx, ZMQ_PUB);
+die 'ffi socket error' unless $ffi_socket;
+
+$ffi->attach_method([$sockobj=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
+package main;
 
 attach(
   ['zmq_send' => 'ffi2']
@@ -48,11 +69,9 @@ attach(
         => ['int*', 'int*', 'int*'] => 'void'
 );
 
-my $ffi_ctx = zmqffi_ctx_new();
-die 'ffi ctx error' unless $ffi_ctx;
+$ffi->attach_method([$sockobj=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
 
-my $ffi_socket = zmqffi_socket($ffi_ctx, ZMQ_PUB);
-die 'ffi socket error' unless $ffi_socket;
+my $ffi_hash = { socket => $ffi_socket };
 
 my $rv;
 
@@ -93,6 +112,7 @@ void loop_Inline(void *send, void *socket, const char *data, long size, int flag
 }
 };
 
+use FFI::TinyCC;
 my $tcc = FFI::TinyCC->new;
 
 $tcc->compile_string(q{
@@ -129,11 +149,25 @@ my $r3 = timethese 1, {
 };
 
 my $r = timethese 10_000_000, {
-    'FFI' => sub {
-        die 'ffi send error' if -1 == main::ffi($ffi, $ffi_socket, 'ohhai', 5, 0);
+    # 'FFI main:: method' => sub {
+    #     die 'ffi send error' if -1 == main::ffi($ffi, $ffi_socket, 'ohhai', 5, 0);
+    # },
+
+    # 'FFI main:: method in hash' => sub {
+    #     die 'ffi send error' if -1 == main::ffi($ffi, $ffi_hash->{socket}, 'ohhai', 5, 0);
+    # },
+
+    'FFI object method' => sub {
+        die 'ffi send error' if -1 == $sockobj->ffio('ohhai', 5, 0);
     },
 
-    'FFI2' => sub {die 'ffi send error' if -1 == ffi2($ffi_socket, 'ohhai', 5, 0);},
+    'FFI xsub' => sub {
+        die 'ffi send error' if -1 == ffi2($ffi_socket, 'ohhai', 5, 0);
+    },
+
+    'FFI xsub in hash' => sub {
+        die 'ffi send error' if -1 == ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
+    },
 
     'XS'  => sub {
         die 'xs send error ' if -1 == zmq_send($xs_socket, 'ohhai', 5, 0);
