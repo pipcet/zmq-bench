@@ -15,5 +15,5 @@ socket.bind('ipc:///tmp/zmq-py-bench')
 
 buf = bytes('ohhai')
 # Process 1000 updates
-for i in range(10*1000*1000):
+for i in range(100*1000*1000):
     socket.send(buf, 0)

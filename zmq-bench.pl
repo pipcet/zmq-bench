@@ -106,7 +106,7 @@ void loop_Inline(void *send, void *socket, const char *data, long size, int flag
   send_t s = send;
   void (*d)(void) = die;
   int i;
-  for(i=0; i<10*1000*1000; i++) {
+  for(i=0; i<100*1000*1000; i++) {
     if(s(socket, data, size, flags) == 1)
       d();
   }
@@ -121,7 +121,7 @@ $tcc->compile_string(q{
   loop(int (*f)(void *, const char *, long, int), void *arg0, const char *arg1, long arg2, int arg3, void (*die)(void))
   {
     int i;
-    for(i=0; i<10*1000*1000; i++)
+    for(i=0; i<100*1000*1000; i++)
       if(f(arg0, arg1, arg2, arg3) == -1)
         die();
   }
@@ -155,7 +155,7 @@ my $r3 = timethese 1, {
   }
 };
 
-my $r = timethese 10_000_000, {
+my $r = timethese 100_000_000, {
     'class method' => sub {
         die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
     },
@@ -185,7 +185,7 @@ for my $key (keys %$r3)
 {
   $r->{$key} = $r3->{$key};
   # HACK! we're accessing the Benchmark object's internal struct
-  $r->{$key}->[5] = 10_000_000;
+  $r->{$key}->[5] = 100_000_000;
 }
 
 cmpthese($r);
