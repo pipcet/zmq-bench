@@ -8,10 +8,11 @@ use v5.10;
 
 use FFI::Platypus::Declare;
 use ZMQ::LibZMQ3;
-
 use ZMQ::FFI::Constants qw(:all);
-
 use Benchmark qw(:all);
+use ExtUtils::Embed qw(ccopts);
+use Inline;
+use FFI::TinyCC;
 
 lib 'libzmq.so';
 
@@ -113,7 +114,6 @@ void loop_Inline(void *send, void *socket, const char *data, long size, int flag
 }
 };
 
-use FFI::TinyCC;
 my $tcc = FFI::TinyCC->new;
 
 $tcc->compile_string(q{
@@ -136,7 +136,8 @@ type('(opaque, string, long, int)->int', 'f_closure');
 type('()->void', 'die_closure');
 attach([$address => 'loop'] => [qw(f_closure opaque string long int die_closure)] => 'void');
 
-my $r3 = timethese 1, {
+my $r3;
+$r3 = timethese 1, {
   TinyCC => sub {
     my $die_closure = closure  { die "zmq_send error"};
 
@@ -156,7 +157,72 @@ my $r3 = timethese 1, {
   'Perl exec' => sub {
     system("perl ./zmq-bench-selfcontained.pl");
   }
-};
+} if 0;
+
+my $tcc2 = FFI::TinyCC->new;
+$tcc2->detect_sysinclude_path;
+$tcc2->set_options(ExtUtils::Embed::ccopts);
+
+$tcc2->compile_string(q{
+#define __builtin_expect(e,v) (e)
+#define PERL_NO_GET_CONTEXT
+#include "EXTERN.h"
+#include "perl.h"
+#include "XSUB.h"
+
+XS(xsub)
+{
+  dXSARGS; dVAR; dXSTARG;
+
+  if(items != 4)
+    croak("usage: blahblah");
+
+  XSprePUSH;
+  PUSHi(zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3))));
+  
+  XSRETURN(1);
+}
+
+void install_xsub(void)
+{
+  dTHX;
+  newXS("main::xsub", xsub, "inline:1");
+}
+}) or die "couldn't compile string";
+
+$tcc2->add_symbol('zmq_send', $ffi->find_symbol('zmq_send'));
+
+Inline->bind(C => qq{
+#define zmq_send ((int (*)(void *, void *, unsigned long, int))${zmqsend}L)
+#define PERL_NO_GET_CONTEXT
+#include "EXTERN.h"
+#include "perl.h"
+#include "XSUB.h"
+
+XS(xsub2)
+{
+  dXSARGS; dVAR; dXSTARG;
+
+  if(items != 4)
+    croak("usage: blahblah");
+
+  XSprePUSH;
+  IV i = zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3)));
+  PUSHi(i);
+  
+  XSRETURN(1);
+}
+
+void install_xsub2()
+{
+  dTHX;
+  newXS("main::xsub2", xsub2, "inline:1");
+}
+}, ccflags => ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native");
+
+$ffi->function($tcc2->get_symbol('install_xsub'), [] => 'void')->call();
+
+install_xsub2();
 
 my $r = timethese 10_000_000, {
     'class method' => sub {
@@ -169,6 +235,14 @@ my $r = timethese 10_000_000, {
 
     'method' => sub {
         die 'ffi send error' if -1 == $sockobj->ffio('ohhai', 5, 0);
+    },
+
+    'Inline xsub' => sub {
+        die 'ffi send error' if -1 == xsub2($ffi_socket, 'ohhai', 5, 0);
+    },
+
+    'TinyCC xsub' => sub {
+        die 'ffi send error' if -1 == xsub($ffi_socket, 'ohhai', 5, 0);
     },
 
     'xsub' => sub {
