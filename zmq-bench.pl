@@ -278,11 +278,17 @@ void install_xsub2()
 }
 }, ccflags => ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native");
 
-$ffi->function($tcc2->get_symbol('install_xsub'), [] => 'void')->call();
-
 install_xsub2();
 
-my $r = timethese 10_000_000, {
+warn Dumper($ffi->_get_other_methods('ffio'));
+$ffi->_get_other_methods('ffio')->{refaddr($sockobj3)}->{body} = get_body();
+warn Dumper($ffi->_get_other_methods('ffio'));
+
+my $r = {};
+
+while(1)
+{
+my $new_r = timethese 10_000_000, {
     'class method' => sub {
         die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
     },
@@ -324,6 +330,13 @@ my $r = timethese 10_000_000, {
     },
 };
 
+for my $key (keys %$new_r)
+{
+  if(!defined $r->{$key} or $new_r->{$key}->cpu_a < $r->{$key}->cpu_a) {
+    $r->{$key} = $new_r->{$key};
+  }
+}
+
 for my $key (keys %$r3)
 {
   $r->{$key} = $r3->{$key};
@@ -332,4 +345,4 @@ for my $key (keys %$r3)
 }
 
 cmpthese($r);
-
+}
