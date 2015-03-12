@@ -177,6 +177,9 @@ XS(xsub)
   if(items != 4)
     croak("usage: blahblah");
 
+  if(!SvOK(ST(0)) || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+    croak("would have to fall back to fastcall.c");
+
   XSprePUSH;
   PUSHi(zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3))));
   
