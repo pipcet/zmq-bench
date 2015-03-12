@@ -9,7 +9,7 @@ use v5.10;
 use FFI::Platypus::Declare;
 use ZMQ::LibZMQ3;
 use ZMQ::FFI::Constants qw(:all);
-use Benchmark qw(:all);
+use Benchmark qw(:all :hireswallclock);
 use ExtUtils::Embed qw(ccopts);
 use Inline;
 use FFI::TinyCC;
