@@ -31,9 +31,12 @@ attach(
         => ['pointer', 'string'] => 'int'
 );
 
-package FFIsock;
+our $ffi_ctx = main::zmqffi_ctx_new();
+die 'ffi ctx error' unless $ffi_ctx;
 
-use ZMQ::LibZMQ3;
+our $ffi_socket = main::zmqffi_socket($ffi_ctx, ZMQ_PUB);
+die 'ffi socket error' unless $ffi_socket;
+package FFIsock;
 
 sub new {
   return bless [], $_[0];
@@ -54,13 +57,6 @@ $ffi->attach_method([$ffi],
 
 $ffi->attach_method(['FFIsock'], ['zmq_send' => 'ffi2']
 		    => ['pointer', 'string', 'size_t', 'int'] => 'int');
-
-my $ffi_ctx = main::zmqffi_ctx_new();
-die 'ffi ctx error' unless $ffi_ctx;
-
-use ZMQ::FFI::Constants qw(:all);
-my $ffi_socket = main::zmqffi_socket($ffi_ctx, ZMQ_PUB);
-die 'ffi socket error' unless $ffi_socket;
 
 $ffi->attach_method([$sockobj=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
 $ffi->attach_method([$sockobj2=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
@@ -287,20 +283,32 @@ warn Dumper($ffi->_get_other_methods('FFIsock::ffio'));
 
 my $r = {};
 
+my $method0 = $sockobj->can('ffio');
+my $method1 = $sockobj2->can('ffio');
+my $method2 = $sockobj3->can('ffio');
+
 sleep(1);
 while(1)
 {
 my $new_r = timethese 10_000_000, {
-    'class method' => sub {
-        die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
-    },
+    # 'class method' => sub {
+    #     die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
+    # },
 
-    'class method(hash)' => sub {
-        die 'ffi send error' if -1 == FFIsock->ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
-    },
+    # 'class method(hash)' => sub {
+    #     die 'ffi send error' if -1 == FFIsock->ffi2($ffi_hash->{socket}, 'ohhai', 5, 0);
+    # },
 
     'method' => sub {
         die 'ffi send error' if -1 == $sockobj->ffio('ohhai', 5, 0);
+    },
+
+    'method (2)' => sub {
+        die 'ffi send error' if -1 == FFIsock::ffio($sockobj, 'ohhai', 5, 0);
+    },
+
+    'method (3)' => sub {
+        die 'ffi send error' if -1 == $sockobj->$method0('ohhai', 5, 0);
     },
 
     'TinyCC method' => sub {
@@ -309,6 +317,22 @@ my $new_r = timethese 10_000_000, {
 
     'Inline method' => sub {
         die 'ffi send error' if -1 == $sockobj3->ffio('ohhai', 5, 0);
+    },
+
+    'TinyCC method (2)' => sub {
+        die 'ffi send error' if -1 == FFIsock::ffio($sockobj2, 'ohhai', 5, 0);
+    },
+
+    'Inline method (2)' => sub {
+        die 'ffi send error' if -1 == FFIsock::ffio($sockobj3, 'ohhai', 5, 0);
+    },
+
+    'TinyCC method (3)' => sub {
+        die 'ffi send error' if -1 == $sockobj2->$method1('ohhai', 5, 0);
+    },
+
+    'Inline method (3)' => sub {
+        die 'ffi send error' if -1 == $sockobj3->$method2('ohhai', 5, 0);
     },
 
     'Inline xsub' => sub {
