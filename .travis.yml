@@ -1,0 +1,20 @@
+language: perl
+
+install:
+  - cpanm -n ZMQ::LibZMQ3
+  - cpanm -n ZMQ::FFI
+  - cpanm -n Benchmark
+  - cpanm -n Inline::C
+  - cpanm -n FFI::TinyCC
+  - cpanm -n ExtUtils::Embed
+  - cpanm -n Scalar::Util
+  - cpanm -n Data::Dumper
+
+perl:
+  - "5.8"
+  - "5.20"
+
+script:
+  - git clone https://github.com/pipcet/FFI-Platypus
+  - cd FFI-Platypus; perl ./Build.PL && perl ./Build && perl ./Build install; cd ..
+  - perl ./zmq-bench.pl --test
