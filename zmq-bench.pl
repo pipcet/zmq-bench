@@ -194,11 +194,11 @@ XS(xsub)
   XSRETURN(1);
 }
 
-void body(pTHX)
+void body(pTHX_ void *data, int extra_arguments)
 {
   dVAR; dXSARGS; dXSTARG;
 
-  if(items != 4 || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+  if((items != 4) || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
     croak("would have to fall back to fastcall.c");
 
   XSprePUSH;
@@ -218,19 +218,20 @@ $tcc2->add_symbol('zmq_send', $ffi->find_symbol('zmq_send'));
 
 my $tcc2_addr = $tcc2->get_symbol('install_xsub');
 warn $tcc2->get_symbol('xsub');
-sleep(1);
 
 $ffi->function($tcc2_addr, [] => 'void')->call();
 
 use Data::Dumper;
 use Scalar::Util qw(refaddr);
 
-warn Dumper($ffi->_get_other_methods('ffio'));
-$ffi->_get_other_methods('ffio')->{refaddr($sockobj2)}->{body} = $tcc2->get_symbol('body');
-warn Dumper($ffi->_get_other_methods('ffio'));
+warn Dumper($ffi->_get_other_methods('FFIsock::ffio'));
+$ffi->_get_other_methods('FFIsock::ffio')->{refaddr($sockobj2)}->{body} = $tcc2->get_symbol('body');
+$ffi->_get_other_methods('FFIsock::ffio')->{refaddr($sockobj2)}->{argument} = $ffi_socket;
+warn Dumper($ffi->_get_other_methods('FFIsock::ffio'));
 
 Inline->bind(C => qq{
-#define zmq_send ((int (*)(void *, void *, unsigned long, int))${zmqsend}L)
+//#define zmq_send ((int (*)(void *, void *, unsigned long, int))${zmqsend}L)
+extern int zmq_send(void *, void *, unsigned long, int);
 #define PERL_NO_GET_CONTEXT
 #include "EXTERN.h"
 #include "perl.h"
@@ -257,7 +258,7 @@ void body(pTHX)
 {
   dVAR; dXSARGS; dXSTARG;
 
-  if(items != 4 || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+  if((items != 4) || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
     croak("would have to fall back to fastcall.c");
 
   XSprePUSH;
@@ -271,21 +272,22 @@ unsigned long get_body()
   return (unsigned long)body;
 }
 
-void install_xsub2()
+void install_xsub2() 
 {
   dTHX;
-  newXS("main::xsub2", xsub2, "inline:1");
+  newXS("main::xsub2"  , xsub2, "inline:1");
 }
-}, ccflags => ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native");
+}, ccflags => (ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native -lzmq3"), libs=>'-lzmq3 -lzmq');
 
 install_xsub2();
 
-warn Dumper($ffi->_get_other_methods('ffio'));
-$ffi->_get_other_methods('ffio')->{refaddr($sockobj3)}->{body} = get_body();
-warn Dumper($ffi->_get_other_methods('ffio'));
+warn Dumper($ffi->_get_other_methods('FFIsock::ffio'));
+$ffi->_get_other_methods('FFIsock::ffio')->{refaddr($sockobj3)}->{body} = get_body();
+warn Dumper($ffi->_get_other_methods('FFIsock::ffio'));
 
 my $r = {};
 
+sleep(1);
 while(1)
 {
 my $new_r = timethese 10_000_000, {
@@ -306,7 +308,7 @@ my $new_r = timethese 10_000_000, {
     },
 
     'Inline method' => sub {
-        die 'ffi send error' if -1 == $sockobj2->ffio('ohhai', 5, 0);
+        die 'ffi send error' if -1 == $sockobj3->ffio('ohhai', 5, 0);
     },
 
     'Inline xsub' => sub {
