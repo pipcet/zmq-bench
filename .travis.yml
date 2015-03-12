@@ -13,6 +13,7 @@ install:
   - cpanm -n ExtUtils::Embed
   - cpanm -n Scalar::Util
   - cpanm -n Data::Dumper
+  - cpanm -n Devel::PPPort
 
 perl:
   - "5.8"
