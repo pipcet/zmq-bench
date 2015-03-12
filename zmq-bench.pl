@@ -273,7 +273,7 @@ void install_xsub2()
   dTHX;
   newXS("main::xsub2"  , xsub2, "inline:1");
 }
-}, cc => 'gcc', ccflags => (ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native -lzmq3"), libs=>'-lzmq3 -lzmq');
+}, cc => 'gcc', ccflags => (ExtUtils::Embed::ccopts . " -O6 -march=native -mtune=native -lzmq3"), libs=>'-lzmq3 -lzmq');
 
 install_xsub2();
 
