@@ -116,7 +116,7 @@ void loop_Inline(void *send, void *socket, const char *data, long size, int flag
       d();
   }
 }
-};
+}, cc=>'gcc';
 
 my $tcc = FFI::TinyCC->new;
 
@@ -147,7 +147,7 @@ $r3 = timethese 1, {
 
     loop($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
   },
-  Inline => sub {
+  'Inline(GCC)'  => sub {
     my $die_closure = closure { die "zmq_send error" };
 
     loop_Inline($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
@@ -273,7 +273,7 @@ void install_xsub2()
   dTHX;
   newXS("main::xsub2"  , xsub2, "inline:1");
 }
-}, ccflags => (ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native -lzmq3"), libs=>'-lzmq3 -lzmq');
+}, cc => 'gcc', ccflags => (ExtUtils::Embed::ccopts . " -O6 -std=c11 -march=native -mtune=native -lzmq3"), libs=>'-lzmq3 -lzmq');
 
 install_xsub2();
 
@@ -316,7 +316,7 @@ my $new_r = timethese 10_000_000, {
         die 'ffi send error' if -1 == $sockobj2->ffio('ohhai', 5, 0);
     },
 
-    'Inline method' => sub {
+    'Inline(GCC) method' => sub {
         die 'ffi send error' if -1 == $sockobj3->ffio('ohhai', 5, 0);
     },
 
@@ -324,7 +324,7 @@ my $new_r = timethese 10_000_000, {
         die 'ffi send error' if -1 == FFIsock::ffio($sockobj2, 'ohhai', 5, 0);
     },
 
-    'Inline method (2)' => sub {
+    'Inline(GCC) method (2)' => sub {
         die 'ffi send error' if -1 == FFIsock::ffio($sockobj3, 'ohhai', 5, 0);
     },
 
@@ -332,11 +332,11 @@ my $new_r = timethese 10_000_000, {
         die 'ffi send error' if -1 == $sockobj2->$method1('ohhai', 5, 0);
     },
 
-    'Inline method (3)' => sub {
+    'Inline(GCC) method (3)' => sub {
         die 'ffi send error' if -1 == $sockobj3->$method2('ohhai', 5, 0);
     },
 
-    'Inline xsub' => sub {
+    'Inline(GCC) xsub' => sub {
         die 'ffi send error' if -1 == xsub2($ffi_socket, 'ohhai', 5, 0);
     },
 
