@@ -288,7 +288,8 @@ my $method1 = $sockobj2->can('ffio');
 my $method2 = $sockobj3->can('ffio');
 
 sleep(1);
-while(1)
+my $count = $ARGV[0] eq '--test' ? 1 : 1000;
+while($count--)
 {
 my $new_r = timethese 10_000_000, {
     # 'class method' => sub {
