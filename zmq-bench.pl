@@ -42,6 +42,8 @@ sub new {
 my $ffi = FFI::Platypus->new;
 
 my $sockobj = FFIsock->new;
+my $sockobj2 = FFIsock->new;
+my $sockobj3 = FFIsock->new;
 
 $ffi->lib('libzmq.so');
 
@@ -61,6 +63,8 @@ my $ffi_socket = main::zmqffi_socket($ffi_ctx, ZMQ_PUB);
 die 'ffi socket error' unless $ffi_socket;
 
 $ffi->attach_method([$sockobj=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
+$ffi->attach_method([$sockobj2=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
+$ffi->attach_method([$sockobj3=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
 package main;
 
 attach(
@@ -74,6 +78,10 @@ attach(
 );
 
 $ffi->attach_method([$sockobj=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
+
+$ffi->attach_method([$sockobj2=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
+
+$ffi->attach_method([$sockobj3=>$ffi_socket], ['zmq_send'=>'ffio'], ['pointer', 'string', 'size_t', 'int'] => 'int');
 
 my $ffi_hash = { socket => $ffi_socket };
 
@@ -186,6 +194,19 @@ XS(xsub)
   XSRETURN(1);
 }
 
+void body(pTHX)
+{
+  dVAR; dXSARGS; dXSTARG;
+
+  if(items != 4 || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+    croak("would have to fall back to fastcall.c");
+
+  XSprePUSH;
+  PUSHi(zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3))));
+
+  XSRETURN(1);
+}
+
 void install_xsub(void)
 {
   dTHX;
@@ -194,6 +215,19 @@ void install_xsub(void)
 }) or die "couldn't compile string";
 
 $tcc2->add_symbol('zmq_send', $ffi->find_symbol('zmq_send'));
+
+my $tcc2_addr = $tcc2->get_symbol('install_xsub');
+warn $tcc2->get_symbol('xsub');
+sleep(1);
+
+$ffi->function($tcc2_addr, [] => 'void')->call();
+
+use Data::Dumper;
+use Scalar::Util qw(refaddr);
+
+warn Dumper($ffi->_get_other_methods('ffio'));
+$ffi->_get_other_methods('ffio')->{refaddr($sockobj2)}->{body} = $tcc2->get_symbol('body');
+warn Dumper($ffi->_get_other_methods('ffio'));
 
 Inline->bind(C => qq{
 #define zmq_send ((int (*)(void *, void *, unsigned long, int))${zmqsend}L)
@@ -209,11 +243,32 @@ XS(xsub2)
   if(items != 4)
     croak("usage: blahblah");
 
+  if(!SvOK(ST(0)) || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+    croak("would have to fall back to fastcall.c");
+
   XSprePUSH;
   IV i = zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3)));
   PUSHi(i);
   
   XSRETURN(1);
+}
+
+void body(pTHX)
+{
+  dVAR; dXSARGS; dXSTARG;
+
+  if(items != 4 || !SvOK(ST(1)) || !SvOK(ST(2)) || !SvOK(ST(3)))
+    croak("would have to fall back to fastcall.c");
+
+  XSprePUSH;
+  PUSHi(zmq_send(SvIV(ST(0)), SvPV_nolen(ST(1)), SvIV(ST(2)), SvIV(ST(3))));
+
+  XSRETURN(1);
+}
+
+unsigned long get_body()
+{
+  return (unsigned long)body;
 }
 
 void install_xsub2()
@@ -238,6 +293,14 @@ my $r = timethese 10_000_000, {
 
     'method' => sub {
         die 'ffi send error' if -1 == $sockobj->ffio('ohhai', 5, 0);
+    },
+
+    'TinyCC method' => sub {
+        die 'ffi send error' if -1 == $sockobj2->ffio('ohhai', 5, 0);
+    },
+
+    'Inline method' => sub {
+        die 'ffi send error' if -1 == $sockobj2->ffio('ohhai', 5, 0);
     },
 
     'Inline xsub' => sub {
