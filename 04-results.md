@@ -24,7 +24,7 @@ TinyCC xsub       2849003/s    57%        56%        43%        42%           42
 ```
 
 Comments:
- - `method` is what I'd actually use today. It uses the attach_method feature to cache a raw ponter for a Perl object without going through its hash, and it's nearly as fast as using an XSUB and going through a hash lookup (`xsub(hash)`). `method (2)` and `method (3)` are variants that don't go through Perl's method resolution mechanism.
+ - `method` is what I'd actually use today. It uses the attach_method feature to cache a raw pointer for a Perl object without going through its hash, and it's nearly as fast as using an XSUB and going through a hash lookup (`xsub(hash)`). `method (2)` and `method (3)` are variants that don't go through Perl's method resolution mechanism.
  - `TinyCC method` is what we would get if we JIT-compiled C code. It's quite a bit faster than `method`, and I believe can be said to be faster than `xsub` based on variant `(3)`.
  - `Inline method` is the same thing with Inline::C *and very aggressive optimization*. I think the gain is not worth it in this case, because Inline has a huge run-time overhead and caches results based only on the C code, not the compiler options or machine type; thus, it is very easy to end up with an _Inline directory that doesn't run on the machine it's on.
  - `XS` is the vanilla LibZMQ3 XS code. It's not been optimized further, which reflects reality.
