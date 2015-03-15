@@ -172,7 +172,7 @@ XS(xsub)
   XSRETURN(1);
 }
 
-void body(pTHX_ void *data, int extra_arguments)
+void body(pTHX)
 {
   dVAR; dXSARGS; dXSTARG;
 
