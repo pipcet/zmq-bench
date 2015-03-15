@@ -32,6 +32,8 @@ Comments:
 
 #### 2015-03-15 ####
 
+ - versions: tag results-20150315 at https://github.com/pipcet/FFI-Platypus/tree/results-20150315, https://github.com/pipcet/tinycc/tree/results-20150315, https://github.com/pipcet/Alien-TinyCC/tree/results-20150315, https://github.com/pipcet/zmq-bench/tree/results-20150315
+
 ```
 			     Rate method Python method (3) method (2) Perl exec, XS based Perl exec, FFI based xsub(hash) Inline(GCC) method TinyCC method Inline(GCC) method (3) Inline(GCC) method (2)   XS TinyCC method (3) TinyCC method (2) xsub TinyCC xsub Inline(GCC) xsub Inline(GCC) TinyCC
 method                  1394700/s     --    -6%        -7%        -7%                -35%                 -38%       -39%               -40%          -43%                   -45%                   -47% -48%              -48%              -49% -50%        -51%             -54%        -87%   -87%
@@ -54,3 +56,8 @@ Inline(GCC) xsub        3021148/s   117%   104%       102%       102%           
 Inline(GCC)            10416667/s   647%   602%       597%       595%                383%                 364%       353%               350%          326%                   308%                   297% 290%              286%              282% 270%        269%             245%          --    -1%
 TinyCC                 10526316/s   655%   609%       604%       602%                388%                 368%       358%               355%          331%                   313%                   301% 294%              291%              286% 274%        273%             248%          1%     --
 ```
+
+Comments:
+ - "xsub" is the code FFI::Platypus generates as of the results-20150315 tag. It uses TinyCC to compile an xsub in the ->attach method, and that's a bit faster than XS, although not quite as fast as the same xsub compiled with GCC/Inline::C; however, the difference is clearly not worth the huge start-up cost of Inline::C
+ - tinycc has been modified to fix a bug and generate slightly better (mostly, this means more readable) code for some of the idioms the Perl headers use, particularly "x ? 1 : 0".
+ - the changes to the Platypus code are really quite minimal, all the heavy lifting is done by tinycc, which really is an excellent piece of software. However, I should point out that the tinycc code we generate does full error checking, argument conversion, and has code to fall back to the libffi version in case of unexpected arguments. In other words, it shouldn't be getting any slower because of these things.
