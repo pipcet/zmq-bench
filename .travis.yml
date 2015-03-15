@@ -5,7 +5,7 @@ before_install:
   - sudo apt-get install gcc
 
 install:
-  - git clone https://github.com/pipcet/Alien-TinyCC && cpanm Alien-TinyCC
+  - git clone --recursive https://github.com/pipcet/Alien-TinyCC && cpanm Alien-TinyCC
   - cpanm -n ZMQ::LibZMQ3
   - cpanm -n ZMQ::FFI
   - cpanm -n Benchmark
