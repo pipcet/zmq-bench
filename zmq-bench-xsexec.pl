@@ -22,6 +22,6 @@ die 'xs bind error' if $rv == -1;
 my $i;
 while(1) {
   $i++;
-  zmq_send($xs_socket, 'ohhai', 5, 0);
-  exit if $i == 100_000_000;
+  die if -1 == zmq_send($xs_socket, 'ohhai', 5, 0);
+  exit if $i == 10_000_000;
 }

@@ -18,5 +18,5 @@ i=0
 while True:
     i+=1
     socket.send(buf, 0)
-    if i == 100*1000*1000:
+    if i == 10*1000*1000:
         exit(0)

@@ -111,7 +111,7 @@ void loop_Inline(void *send, void *socket, const char *data, long size, int flag
   send_t s = send;
   void (*d)(void) = die;
   int i;
-  for(i=0; i<100*1000*1000; i++) {
+  for(i=0; i<10*1000*1000; i++) {
     if(s(socket, data, size, flags) == 1)
       d();
   }
@@ -125,7 +125,7 @@ $tcc->compile_string(q{
   loop(int (*f)(void *, const char *, long, int), void *arg0, const char *arg1, long arg2, int arg3, void (*die)(void))
   {
     int i;
-    for(i=0; i<100*1000*1000; i++)
+    for(i=0; i<10*1000*1000; i++)
       if(f(arg0, arg1, arg2, arg3) == -1)
         die();
   }
@@ -141,30 +141,6 @@ type('()->void', 'die_closure');
 attach([$address => 'loop'] => [qw(f_closure opaque string long int die_closure)] => 'void');
 
 my $r3;
-$r3 = timethese 1, {
-  TinyCC => sub {
-    my $die_closure = closure  { die "zmq_send error"};
-
-    loop($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
-  },
-  'Inline(GCC)'  => sub {
-    my $die_closure = closure { die "zmq_send error" };
-
-    loop_Inline($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
-  },
-  Python => sub {
-    # this is a little unfair, since there's overhead for starting
-    # python and waiting for it, but that's on the order of a tenth of
-    # a second ...
-    system("python ./zmq-bench.py");
-  },
-  'Perl exec, XS based' => sub {
-    system("perl ./zmq-bench-xsexec.pl");
-  },
-  'Perl exec, FFI based' => sub {
-    system("perl ./zmq-bench-ffiexec.pl");
-  },
-} if 0;
 
 my $tcc2 = FFI::TinyCC->new;
 $tcc2->detect_sysinclude_path;
@@ -297,6 +273,31 @@ sleep(1);
 my $count = $ARGV[0] eq '--test' ? 1 : 1000;
 while($count--)
 {
+$r3 = timethese 1, {
+  TinyCC => sub {
+    my $die_closure = closure  { die "zmq_send error"};
+
+    loop($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
+  },
+  'Inline(GCC)'  => sub {
+    my $die_closure = closure { die "zmq_send error" };
+
+    loop_Inline($zmqsend, $ffi_socket, 'ohhai', 5, 0, $die_closure);
+  },
+  Python => sub {
+    # this is a little unfair, since there's overhead for starting
+    # python and waiting for it, but that's on the order of a tenth of
+    # a second ...
+    system("python ./zmq-bench.py");
+  },
+  'Perl exec, XS based' => sub {
+    system("perl ./zmq-bench-xsexec.pl");
+  },
+  'Perl exec, FFI based' => sub {
+    system("perl ./zmq-bench-ffiexec.pl");
+  },
+};
+
 my $new_r = timethese 10_000_000, {
     # 'class method' => sub {
     #     die 'ffi send error' if -1 == FFIsock->ffi2($ffi_socket, 'ohhai', 5, 0);
@@ -372,9 +373,11 @@ for my $key (keys %$new_r)
 
 for my $key (keys %$r3)
 {
-  $r->{$key} = $r3->{$key};
-  # HACK! we're accessing the Benchmark object's internal struct
-  $r->{$key}->[5] = 100_000_000;
+  if(!defined $r->{$key} or $r3->{$key}->cpu_a < $r->{$key}->cpu_a) {
+    $r->{$key} = $r3->{$key};
+    # HACK! we're accessing the Benchmark object's internal struct
+    $r->{$key}->[5] = 10_000_000;
+  }
 }
 
 cmpthese($r);

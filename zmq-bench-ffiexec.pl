@@ -8,8 +8,15 @@ use v5.10;
 use ZMQ::FFI::Constants qw(:all);
 use FFI::TinyCC;
 use FFI::Platypus::Declare;
+use Carp::Always;
 
 lib 'libzmq.so';
+
+attach(
+    ['zmq_bind' => 'zmqffi_bind']
+	=> ['pointer', 'string'] => 'int'
+);
+
 
 attach(
     ['zmq_ctx_new' => 'zmqffi_ctx_new']
@@ -19,11 +26,6 @@ attach(
 attach(
     ['zmq_socket' => 'zmqffi_socket']
 	=> ['pointer', 'int'] => 'pointer'
-);
-
-attach(
-    ['zmq_bind' => 'zmqffi_bind']
-	=> ['pointer', 'string'] => 'int'
 );
 
 attach(
@@ -55,6 +57,6 @@ say "FFI ZMQ Version: " . join(".", $major, $minor, $patch);
 my $i;
 while(1) {
   $i++;
-  zmqffi_send($ffi_socket, 'ohhai', 5, 0);
-  exit if $i == 100_000_000;
+  die if -1 == zmqffi_send($ffi_socket, 'ohhai', 5, 0);
+  exit if $i == 10_000_000;
 }
